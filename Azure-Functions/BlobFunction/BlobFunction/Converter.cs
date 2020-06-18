@@ -7,13 +7,15 @@ using System.Linq;
 using GEP.Techathon.API;
 using Microsoft.WindowsAzure.Storage.Blob;
 using BlobFunction.Extensions;
+using Microsoft.Build.Utilities;
+using System.Threading.Tasks;
 
 namespace BlobFunction
 {
     class Converter
     {
         private string[] excelFormats = { ".xls", ".xlsm", ".xlsx" };
-        private StorageConnection conn;
+        public StorageConnection conn;
 
         public Converter() {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -23,12 +25,14 @@ namespace BlobFunction
             conn.Connect();
         }
 
+        
 
-        public async void  ConvertUsingExcelLibrary(Stream myBlob, string path)
+
+        public async void  ConvertUsingExcelLibrary(string path)
         {
             if (excelFormats.Contains(Path.GetExtension(path)))
             {
-                ExcelToCsv(myBlob, path);
+                ExcelToCsv(path);
             }
             else
             {
@@ -38,16 +42,16 @@ namespace BlobFunction
                 await container.CreateIfNotExistsAsync();
                 //CloudBlockBlob blob;
 
-                CloudBlockBlob blob = container.GetBlockBlobReference(newPath);
-
+                CloudBlockBlob blob = container.GetBlockBlobReference(path);
+                CloudBlockBlob newBlob = container.GetBlockBlobReference(newPath);
                 blob.Properties.ContentType = "application/json";
-
-                
+                newBlob.Properties.ContentType = "application/json";
+                Stream myBlob = await blob.OpenReadAsync();
                 var dataBytes = StreamExtensions.ReadToEnd(myBlob);
                 using (Stream stream = new MemoryStream(dataBytes,0, dataBytes.Length))
                 {
 
-                    await blob.UploadFromStreamAsync(stream).ConfigureAwait(false);
+                    await newBlob.UploadFromStreamAsync(stream).ConfigureAwait(false);
 
                 }
 
@@ -59,39 +63,75 @@ namespace BlobFunction
 
 
 
-        private async void ExcelToCsv(Stream myBlob, string path)
+        private async void ExcelToCsv(string path)
         {
             //FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read);
             StringBuilder builder = new StringBuilder();
-            StreamReader reader = new StreamReader(myBlob);
-            using (var rdr = ExcelReaderFactory.CreateOpenXmlReader(myBlob))
-            {
-                while (rdr.Read())
-                {
-                    for (int i = 0; i < rdr.FieldCount; i++)
-                    {
-                        var data = rdr.GetValue(i);
-                        if (data != null)
-                        {
-                            builder.Append(returnWithQuotes(data.ToString()) + ",");
-                        }
-                        else {
-                            builder.Append(",");
-                        }
-                    }
-                    builder.Remove(builder.Length - 1, 1);
-                    builder.AppendLine();
-                }
-            }
-            //fs.Close();
-            string newPath = string.Join(".", path.Split(".").SkipLast(1).Append("csv"));
             CloudBlobClient client = conn.storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = client.GetContainerReference(conn.config.Container);
             await container.CreateIfNotExistsAsync();
             CloudBlockBlob blob;
-            blob = container.GetBlockBlobReference(newPath);
+            blob = container.GetBlockBlobReference(path);
             blob.Properties.ContentType = "application/json";
-            await blob.UploadTextAsync(builder.ToString());
+            //Stream myBlob = await blob.OpenReadAsync();
+            using (var blobStream = await blob.OpenReadAsync())
+            {
+                if (Path.GetExtension(path) == ".xls")
+                {
+                    using (var rdr = ExcelReaderFactory.CreateBinaryReader(blobStream))
+                    {
+                        while (rdr.Read())
+                        {
+                            for (int i = 0; i < rdr.FieldCount; i++)
+                            {
+                                var data = rdr.GetValue(i);
+                                if (data != null)
+                                {
+                                    builder.Append(returnWithQuotes(data.ToString()) + ",");
+                                }
+                                else
+                                {
+                                    builder.Append(",");
+                                }
+                            }
+                            builder.Remove(builder.Length - 1, 1);
+                            builder.AppendLine();
+                        }
+                    }
+
+                }
+                else {
+                    using (var rdr = ExcelReaderFactory.CreateOpenXmlReader(blobStream))
+                    {
+                        while (rdr.Read())
+                        {
+                            for (int i = 0; i < rdr.FieldCount; i++)
+                            {
+                                var data = rdr.GetValue(i);
+                                if (data != null)
+                                {
+                                    builder.Append(returnWithQuotes(data.ToString()) + ",");
+                                }
+                                else
+                                {
+                                    builder.Append(",");
+                                }
+                            }
+                            builder.Remove(builder.Length - 1, 1);
+                            builder.AppendLine();
+                        }
+                    }
+
+                }
+            }
+
+           
+            //fs.Close();
+            string newPath = string.Join(".", path.Split(".").SkipLast(1).Append("csv"));
+            CloudBlockBlob newBlob;
+            newBlob = container.GetBlockBlobReference(newPath);
+            newBlob.Properties.ContentType = "application/json";
+            await newBlob.UploadTextAsync(builder.ToString());
         }
 
 
