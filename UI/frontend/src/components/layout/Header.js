@@ -1,6 +1,6 @@
 import React from 'react'
 import '../../css/Header.css'
-import {Link} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 
 export default function Header() {
     return (
@@ -8,8 +8,8 @@ export default function Header() {
             <div className="brand">CSV Converter Scheduler</div>
             <div className="nav-links">
                 <ul>
-                <Link to="/"><li>Scheduler</li></Link>
-                <Link to="/upload"><li>Upload a file to Blob</li></Link>
+                <NavLink activeStyle={{ color: 'red' }} to="/"><li>Scheduler</li></NavLink>
+                <NavLink activeStyle={{ color: 'red' }} to="/upload"><li>Upload a file to Blob</li></NavLink>
                 </ul>
             </div>
         </div>

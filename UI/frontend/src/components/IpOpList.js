@@ -56,32 +56,51 @@ export class IpOpList extends Component {
 
     render() {
         return (
+            <div>
+                <div className="section-head">
+                    <h2>File Tracker</h2>
+                </div>
             <div className="IpOpTable">
-                <table>
+                <table className="file-table">
                     <thead>
                     <tr>
                     
                         <th>Input Files</th>
-                        <th>Converted Files</th>
+
                    
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
+                   
                             {this.props.inputFiles.map( item => (
-                                <li key={this.props.inputFiles.indexOf(item)}>{item} {' '} <button className="down-but" onClick={this.handleDownload.bind(this,item)}>Download</button><button className="del-but" onClick={this.handleDelete.bind(this, item)}>X</button></li>
-                                
+                             <tr>
+                             <td className="file-n">{item}</td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i class="fa fa-trash" aria-hidden="true"></i></button></td><td>
+                             </td> 
+                             </tr> 
                             ) )}
-                        
-                        </td>
-                        <td>{this.props.outputFiles.map( item => (
-                                <li key={this.props.outputFiles.indexOf(item)}>{item} {' '} <button className="down-but" onClick={this.handleDownload.bind(this,item)}>Download</button><button className="del-but" onClick={this.handleDelete.bind(this, item)}>X</button></li>
-                                
-                            ) )}</td>
+                       </tbody>
+                </table> 
+                <table className="file-table">
+                    <thead>
+                    <tr>
+                    
+                        <th>CSV Files</th>
+
+                   
                     </tr>
-                    </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                   
+                            {this.props.outputFiles.map( item => (
+                             <tr>
+                             <td className="file-n">{item} </td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i class="fa fa-trash" aria-hidden="true"></i></button></td><td>
+                             </td> 
+                             </tr> 
+                            ) )}
+                       </tbody>
+                </table> 
+               
+            </div>
             </div>
         )
     }

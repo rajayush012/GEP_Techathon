@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react'
 import '../css/FileUploader.css'
 import IpOpList from './IpOpList'
+import '../css/css/font-awesome.min.css'
 
 
 const dotenv = require('dotenv')
