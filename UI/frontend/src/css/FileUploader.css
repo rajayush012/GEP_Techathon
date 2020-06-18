@@ -37,3 +37,45 @@ form{
 
 
 }
+
+.IpOpTable table{
+  margin: 0px auto;
+}
+
+.IpOpTable li{
+  list-style: none;
+}
+
+.IpOpTable .del-but{
+  
+  font-size: 10px !important;
+  background-color: #B20000 !important; 
+  transition: 0.3s;
+  color: #fff;
+  margin: 5px;
+}
+
+.IpOpTable .del-but:hover{
+  
+    box-shadow: 0 0 3px;
+   
+    transform: translateY(-7px);
+  
+}
+
+.IpOpTable .down-but{
+  
+  font-size: 10px !important;
+  background-color: #2EE59D !important; 
+  transition: 0.3s;
+  color: black;
+  margin: 5px;
+}
+
+.IpOpTable .down-but:hover{
+  
+    box-shadow: 0 0 3px;
+   
+    transform: translateY(-7px);
+  
+}
