@@ -5,6 +5,9 @@ import Header from './components/layout/Header'
 import FileUploader from './components/FileUploader'
 import Scheduler from './components/Scheduler'
 
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 class App extends React.Component {
   render(){
