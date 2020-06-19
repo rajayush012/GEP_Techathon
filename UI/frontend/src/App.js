@@ -16,7 +16,7 @@ class App extends React.Component {
       <Router>
         <div className="App">
           <Header />
-          <Route path="/upload" component={FileUploader}/>
+          <Route path="/" component={FileUploader}/>
           <Route path="/about" component={About} />
         </div>
       </Router>

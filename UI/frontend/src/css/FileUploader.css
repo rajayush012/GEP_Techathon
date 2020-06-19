@@ -53,6 +53,8 @@ form{
   transition: 0.3s;
   color: #fff;
   margin: 5px;
+  border-radius: 3px !important;
+  box-shadow: none !important
 }
 
 .IpOpTable .del-but:hover{
