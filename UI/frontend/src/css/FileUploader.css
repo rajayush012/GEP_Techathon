@@ -96,3 +96,30 @@ form{
 .file-n{
   width: 250px;
 }
+
+
+.drop-zone{
+  height: 110px !important;
+  width: 100% !important;
+  background: grey !important;
+  margin: 0px auto;
+  border: 3px dotted #3D434B;
+  padding-top: 80px;
+  font-size: 25px;
+  transition: 0.3s ease-in-out;
+}
+
+.drop-zone::before{
+  content: "or drop your file here."
+}
+
+.drop-zone:hover{
+  background: lightslategray !important;
+}
+
+.dnd{
+  text-align: center;
+  width: 65%;
+  margin: 40px auto;
+  
+}

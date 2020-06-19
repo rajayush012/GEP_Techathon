@@ -35,6 +35,11 @@ export class IpOpList extends Component {
     componentDidMount() {
         // this.getInputFiles()
         // this.getOutputFiles()
+        setInterval(()=>{
+            this.props.getInputFiles();
+            this.props.getOutputFiles();
+            console.log("checking for new files...")
+        },10000)
     }
 
     handleDelete = (item) => {

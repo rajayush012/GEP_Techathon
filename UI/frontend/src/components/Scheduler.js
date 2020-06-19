@@ -7,13 +7,15 @@ export class Scheduler extends Component {
         super();
         this.state = {
             status : 'stopped',
-            buttonVal : 'Start'
+            buttonVal : 'Start',
+            logger : []
         }
     }
 
-    componentDidMount(){
-
-    }
+    // componentDidUpdate(){
+    //     console.log("Updated")
+    //  }
+ 
 
     handleStartScheduler(){
         this.setState({
@@ -25,6 +27,7 @@ export class Scheduler extends Component {
     getStyle = () => {
         return this.state.status === 'active' ? {display : 'block'} : {display : 'none'}
     }
+
 
     render() {
         return (

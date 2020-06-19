@@ -8,7 +8,6 @@ export default function Header() {
             <div className="brand">CSV Converter Scheduler</div>
             <div className="nav-links">
                 <ul>
-                <NavLink activeStyle={{ color: 'red' }} to="/"><li>Scheduler</li></NavLink>
                 <NavLink activeStyle={{ color: 'red' }} to="/upload"><li>Upload a file to Blob</li></NavLink>
                 </ul>
             </div>
