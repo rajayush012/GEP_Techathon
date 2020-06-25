@@ -79,7 +79,7 @@ export class IpOpList extends Component {
                    
                             {this.props.inputFiles.map( item => (
                              <tr>
-                             <td className="file-n">{item}</td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i class="fa fa-trash" aria-hidden="true"></i></button></td><td>
+                             <td className="file-n">{item}</td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i className="fa fa-trash" aria-hidden="true"></i></button></td><td>
                              </td> 
                              </tr> 
                             ) )}
@@ -97,8 +97,8 @@ export class IpOpList extends Component {
                     <tbody>
                    
                             {this.props.outputFiles.map( item => (
-                             <tr>
-                             <td className="file-n">{item} </td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i class="fa fa-trash" aria-hidden="true"></i></button></td><td>
+                             <tr >
+                             <td className="file-n">{item} </td><td><button className="down-but" onClick={this.handleDownload.bind(this,item)}><i className="fa fa-download" aria-hidden="true"></i></button></td><td><button className="del-but" onClick={this.handleDelete.bind(this, item)}><i className="fa fa-trash" aria-hidden="true"></i></button></td><td>
                              </td> 
                              </tr> 
                             ) )}

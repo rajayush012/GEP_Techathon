@@ -3,12 +3,27 @@ import '../css/FileUploader.css'
 import IpOpList from './IpOpList'
 import '../css/css/font-awesome.min.css'
 import ProgressBar from './ProgessBar'
+import Axios from 'axios';
 
 const dotenv = require('dotenv')
+
+
 
 dotenv.config()
 
 const axios = require('axios')
+
+var maxBlockSize = 256 * 1024;//Each file will be split in 256 KB.
+var numberOfBlocks = 1;
+var selectedFile = null;
+var currentFilePointer = 0;
+var totalBytesRemaining = 0;
+var blockIds = new Array();
+var blockIdPrefix = "block-";
+var submitUri = null;
+var bytesUploaded = 0;
+var fileSize = 0
+var reader = new FileReader();
 
 export class FileUploader extends Component {
     constructor(){
@@ -22,9 +37,11 @@ export class FileUploader extends Component {
             queue : [],
             alreadyCsv : [],
             logger : [],
-            
+            sasuri : '',
             
         }
+
+        this.reader = new FileReader()
         this.inputFileRef = createRef()  
         this.dndRef = createRef()      
             }
@@ -51,6 +68,8 @@ export class FileUploader extends Component {
         });
 
         
+
+        
     }
 
     handleLogger = (fileName) => {
@@ -74,6 +93,7 @@ export class FileUploader extends Component {
     
     componentDidUpdate(){
        // console.log("Updated")
+
 
     }
 
@@ -114,7 +134,7 @@ export class FileUploader extends Component {
                },1000)
            })
            alert("File Uploaded Succesfully!")
-           if(file[0].split(".").pop()!=='csv'){
+           if(file[0].name.split(".").pop()!=='csv'){
             this.state.queue.push([file[0].name])
            }
            else
@@ -125,6 +145,153 @@ export class FileUploader extends Component {
            
         })
         
+    }
+
+   
+    directUpload = (files) => {
+             maxBlockSize = 256 * 1024;
+             currentFilePointer = 0;
+             totalBytesRemaining = 0;
+             if(files[0] === undefined){
+                 return
+             }
+             selectedFile = files[0];
+             numberOfBlocks = 1
+             fileSize = selectedFile.size;
+             blockIds = new Array()
+             bytesUploaded = 0
+            if (fileSize < maxBlockSize) {
+                maxBlockSize = fileSize;
+                console.log("max block size = " + maxBlockSize);
+            }
+            totalBytesRemaining = fileSize;
+            if (fileSize % maxBlockSize == 0) {
+                numberOfBlocks = fileSize / maxBlockSize;
+            } else {
+                numberOfBlocks = parseInt(fileSize / maxBlockSize, 10) + 1;
+            }
+            console.log("total blocks = " + numberOfBlocks);
+            var baseUrl = this.state.sasuri
+            var indexOfQueryStart = baseUrl.indexOf("?");
+            var submitUri = baseUrl.substring(0, indexOfQueryStart) + selectedFile.name + baseUrl.substring(indexOfQueryStart);
+            console.log(submitUri);
+
+            
+            var fileContent = selectedFile.slice(currentFilePointer, currentFilePointer + maxBlockSize);
+            //reader.readAsArrayBuffer(fileContent);
+
+            reader.onloadend =   (evt) => {
+                //console.log('hello')
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    var uri = submitUri + '&comp=block&blockid=' + blockIds[blockIds.length - 1];
+                    var requestData = new Uint8Array(evt.target.result);
+                    var config = {
+                        url: uri,
+                        method: "put",
+                        data: requestData,
+                        headers: {
+                            'x-ms-blob-type': 'BlockBlob',
+                            'x-ms-date' : '2020-06-25',
+                            'x-ms-version' : '2019-07-07'
+                        }
+                    }
+
+                    Axios(config)
+                    .then(
+                        res=> {
+                            console.log(res)
+                            //console.log(this)
+                            bytesUploaded += requestData.length;
+                        var percentComplete = ((parseFloat(bytesUploaded) / parseFloat(selectedFile.size)) * 100).toFixed(2);
+                        
+                        if(percentComplete < 100){
+                            this.setState({
+                                uploadPercent : percentComplete,
+                                displayP : 'flex'
+                            })
+                        }
+
+                            this.uploadFileInBlocks(selectedFile,submitUri)
+                        }
+                    )
+            }
+           // console.log(evt)
+            }
+            
+            this.uploadFileInBlocks(selectedFile,submitUri)
+            
+    }
+
+
+    uploadFileInBlocks = (selectedFile,submitUri)=>{
+        if (totalBytesRemaining > 0) {
+            console.log(totalBytesRemaining)
+            console.log("current file pointer = " + currentFilePointer + " bytes read = " + maxBlockSize);
+            var fileContent = selectedFile.slice(currentFilePointer, currentFilePointer + maxBlockSize);
+            var blockId = blockIdPrefix + this.pad(blockIds.length, 6);
+            console.log("block id = " + blockId);
+            blockIds.push(btoa(blockId));
+            reader.readAsArrayBuffer(fileContent);
+            currentFilePointer += maxBlockSize;
+            totalBytesRemaining -= maxBlockSize;
+            if (totalBytesRemaining < maxBlockSize) {
+                maxBlockSize = totalBytesRemaining;
+            }
+           
+        } else {
+            this.commitBlockList(submitUri);
+           
+        }
+       
+    }
+    commitBlockList(submitUri) {
+        var uri = submitUri + '&comp=blocklist';
+        console.log(submitUri)
+        console.log(uri);
+        var requestBody = '<?xml version="1.0" encoding="utf-8"?><BlockList>';
+        for (var i = 0; i < blockIds.length; i++) {
+            requestBody += '<Latest>' + blockIds[i] + '</Latest>';
+        }
+        requestBody += '</BlockList>';
+        //console.log(requestBody);
+        
+        var config = {
+            url: uri,
+            method: "put",
+            data: requestBody,
+            headers : {
+                'x-ms-blob-content-type': selectedFile.type,
+                'x-ms-date' : '2020-06-25',
+                'x-ms-version' : '2019-07-07'
+            }
+        }
+
+        Axios(config)
+        .then((resolve,reject) => {
+            this.setState({
+                uploadPercent : 100
+            },()=>{
+                setTimeout(()=>{
+                 this.setState({
+                     uploadPercent : 0,
+                     displayP : 'none'
+                 })
+                },1000)
+            })
+            console.log("Upload success!")
+            reader = new FileReader()
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
+    }
+    pad(number, length) {
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        return str;
     }
 
     getInputFiles = () => {
@@ -161,19 +328,30 @@ export class FileUploader extends Component {
 
     handleFileClick =() =>{
         this.inputFileRef.current && this.inputFileRef.current.click();
+
+
     }
 
+    handleSASURI(ele){
+        this.setState({
+            sasuri : ele.target.value
+        })
+    }
     render() {
         return (
             <div className="fileuploadbox">
                     <div><h1>Upload file to Blob location</h1></div>
+                    <h2>
+                            SAS URI
+                        </h2>
+                       <div> <input type='text' onChange={this.handleSASURI.bind(this)} value={this.state.sasuri} placeholder="Enter SAS URI here" style={{width: '60%', height : '30px'}} /> </div>
                     <input 
                         style={{ display: 'none' }}
                         name="input-file"
                         ref={this.inputFileRef}
                         type="file"
                         multiple={false}
-                        onChange={e => this.uploadFiles(e.target.files)}
+                        onChange={e => this.directUpload(e.target.files)}
                     />
                     <button className="btn"
                         onClick = {this.handleFileClick}>

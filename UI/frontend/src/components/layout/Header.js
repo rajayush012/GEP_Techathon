@@ -9,6 +9,7 @@ export default function Header() {
             <div className="nav-links">
                 <ul>
                 <NavLink activeStyle={{ color: 'red' }} to="/"><li>Upload a file to Blob</li></NavLink>
+                <NavLink activeStyle={{ color: 'red' }} to="/logs"><li>Logs</li></NavLink>
                 </ul>
             </div>
         </div>

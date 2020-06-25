@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './App.css';
 import Header from './components/layout/Header'
 import FileUploader from './components/FileUploader'
+import Logs from './components/Logs'
 
 import About from './components/About'
 
@@ -16,7 +17,8 @@ class App extends React.Component {
       <Router>
         <div className="App">
           <Header />
-          <Route path="/" component={FileUploader}/>
+          <Route exact path="/" component={FileUploader}/>
+          <Route path="/logs" component={Logs}/>
           <Route path="/about" component={About} />
         </div>
       </Router>

@@ -1,0 +1,40 @@
+.logs{
+    margin : 50px auto;
+    padding: 20px;
+    font-size: 12px;
+}
+
+.logger{
+    border: 1px solid white;
+    padding: 3px;
+    height: 300px;
+    overflow: auto;
+    background: white;
+    color: black
+}
+
+.log{
+    transition: 0.1s;
+    border-bottom: 1px solid gray;
+    padding: 7px;
+}
+
+.log:hover{
+    background: black;
+    color: whitesmoke;
+}
+
+.inverted{
+    background: lightgrey;
+    color: black;
+}
+
+.spinner{
+    width: 100%;
+    text-align: center;
+}
+
+.fa-spin{
+    font-size: 100px;
+    margin-top: 100px !important;
+}
