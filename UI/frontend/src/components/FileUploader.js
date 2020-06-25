@@ -38,7 +38,8 @@ export class FileUploader extends Component {
             alreadyCsv : [],
             logger : [],
             sasuri : '',
-            
+            btnGreen : true,
+            btnContent : 'CLICK HERE TO UPLOAD'
         }
 
         this.reader = new FileReader()
@@ -154,6 +155,24 @@ export class FileUploader extends Component {
              totalBytesRemaining = 0;
              if(files[0] === undefined){
                  return
+             }
+             if(files[0].name.split('.').pop() !== 'xls' && files[0].name.split('.').pop() !== 'xlsx' && files[0].name.split('.').pop() !== 'txt' && files[0].name.split('.').pop() !== 'csv' ){
+                
+                this.setState({
+                    btnGreen : false,
+                    btnContent : 'INVALID FILE TYPE'
+                })
+
+                setTimeout(()=>{
+                    this.setState({
+                        btnGreen : true,
+                        btnContent:'CLICK HERE TO UPLOAD'
+
+                    })
+                }, 2000)
+
+                
+                return
              }
              selectedFile = files[0];
              numberOfBlocks = 1
@@ -340,7 +359,7 @@ export class FileUploader extends Component {
     render() {
         return (
             <div className="fileuploadbox">
-                    <div><h1>Upload file to Blob location</h1></div>
+                    <div><h1>Upload file to Azure Blob location</h1></div>
                     <h2>
                             SAS URI
                         </h2>
@@ -353,9 +372,9 @@ export class FileUploader extends Component {
                         multiple={false}
                         onChange={e => this.directUpload(e.target.files)}
                     />
-                    <button className="btn"
+                    <button className={this.state.btnGreen ? "btn" : "btn inverted"}
                         onClick = {this.handleFileClick}>
-                        Click here to upload
+                        {this.state.btnContent}
                         </button>
 
                         <div className="progress-box">

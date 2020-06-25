@@ -49,13 +49,13 @@ export class Logs extends Component {
             <div className="logSection">
                 <hr />
                 <div className="logs" >
-                    <h1>Logs</h1>
+                    <h1 className="cent">Logs</h1>
                     
                         <div id="scroller" className='logger'>
                             
                             {this.state.loading ? <LoadingSpinner /> : this.state.logs.map((log, i) => {
                                 if(i==this.state.logs.length-1){
-                                    return <div className="log inverted">{log}</div>
+                                    return <div className="log invert">{log}</div>
                                 }
                                 return <div className="log">{log}</div>
                             })}

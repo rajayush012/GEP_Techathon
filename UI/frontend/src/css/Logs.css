@@ -4,13 +4,17 @@
     font-size: 12px;
 }
 
+
+
 .logger{
     border: 1px solid white;
     padding: 3px;
-    height: 300px;
+    height: 400px;
     overflow: auto;
     background: white;
-    color: black
+    color: black;
+    width: 75%; 
+    margin: auto;
 }
 
 .log{
@@ -24,7 +28,7 @@
     color: whitesmoke;
 }
 
-.inverted{
+.invert{
     background: lightgrey;
     color: black;
 }
@@ -37,4 +41,8 @@
 .fa-spin{
     font-size: 100px;
     margin-top: 100px !important;
+}
+
+.cent{
+    text-align: center
 }
