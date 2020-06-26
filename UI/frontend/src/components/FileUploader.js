@@ -190,7 +190,7 @@ export class FileUploader extends Component {
                 numberOfBlocks = parseInt(fileSize / maxBlockSize, 10) + 1;
             }
             console.log("total blocks = " + numberOfBlocks);
-            var baseUrl = this.state.sasuri
+            var baseUrl = 'https://storageaccountgepte86f5.blob.core.windows.net/techathoninput/?sv=2019-10-10&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-06-28T21:42:19Z&st=2020-06-24T13:42:19Z&spr=https&sig=ym9RFOSl0BeMYq4IQdih5ojoOZWF2N4%2BbsgTGCdi5Xw%3D'
             var indexOfQueryStart = baseUrl.indexOf("?");
             var submitUri = baseUrl.substring(0, indexOfQueryStart) + selectedFile.name + baseUrl.substring(indexOfQueryStart);
             console.log(submitUri);
@@ -361,10 +361,7 @@ export class FileUploader extends Component {
         return (
             <div className="fileuploadbox">
                     <div><h1>Upload file to Azure Blob location</h1></div>
-                    <h2>
-                            SAS URI
-                        </h2>
-                       <div> <input type='text' onChange={this.handleSASURI.bind(this)} value={this.state.sasuri} placeholder="Enter SAS URI here" style={{width: '60%', height : '30px'}} /> </div>
+                   
                     <input 
                         style={{ display: 'none' }}
                         name="input-file"
