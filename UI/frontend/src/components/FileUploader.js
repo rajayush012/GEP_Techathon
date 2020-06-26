@@ -298,6 +298,7 @@ export class FileUploader extends Component {
                 },1000)
             })
             console.log("Upload success!")
+            alert('Uploaded File Successfully')
             reader = new FileReader()
         })
         .catch(err => {

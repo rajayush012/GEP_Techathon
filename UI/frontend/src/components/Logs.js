@@ -40,7 +40,7 @@ export class Logs extends Component {
                         element.scrollTop = element.scrollHeight;
                     })
                 })
-        }, 7000)
+        }, 10000)
     }
 
     render() {
